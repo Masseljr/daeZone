@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +21,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=t*g-)67t^fy4u&@pr#=^y!_ttka+&5#vw47)7@eozwa!o&cob'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-=t*g-)67t^fy4u&@pr#=^y!_ttka+&5#vw47)7@eozwa!o&cob')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['.railway.app', '.vercel.app', 'localhost', '127.0.0.1']
+
+# Add Railway domain from environment
+RAILWAY_STATIC_URL = os.environ.get('RAILWAY_STATIC_URL', '')
+if RAILWAY_STATIC_URL:
+    ALLOWED_HOSTS.append(RAILWAY_STATIC_URL)
+
+# CSRF trusted origins for Railway
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.railway.app',
+    'https://*.vercel.app',
+]
 
 
 # Application definition
