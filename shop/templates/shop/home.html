@@ -1,0 +1,89 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}DaeZone - Shop All Products{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Welcome to DaeZone</h1>
+        <p>Discover amazing products at great prices</p>
+    </div>
+
+    <!-- Category Filter -->
+    {% if categories %}
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <a href="{% url 'shop:home' %}" class="btn btn-small {% if not selected_category %}btn-accent{% else %}btn-secondary{% endif %}" style="margin: 0.5rem;">All</a>
+        {% for category in categories %}
+        <a href="?category={{ category.slug }}" class="btn btn-small {% if selected_category == category.slug %}btn-accent{% else %}btn-secondary{% endif %}" style="margin: 0.5rem;">
+            {{ category.name }}
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Product Grid -->
+    {% if products %}
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <a href="{% url 'shop:product_detail' product.slug %}" style="text-decoration: none; color: inherit;">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                {% else %}
+                <div class="product-image-placeholder">
+                    <span class="placeholder-text">{{ product.name|truncatewords:3 }}</span>
+                </div>
+                {% endif %}
+                
+                {% if product.is_on_sale %}
+                <span class="sale-badge">SALE {{ product.discount_percent }}% OFF</span>
+                {% endif %}
+                
+                <div class="product-info">
+                    <p class="product-category">{{ product.category.name }}</p>
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    
+                    <div class="product-price">
+                        {% if product.is_on_sale %}
+                        <span class="price-original">${{ product.original_price }}</span>
+                        <span class="price-sale">${{ product.sale_price }}</span>
+                        {% else %}
+                        <span class="price-regular">${{ product.original_price }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <p class="stock-info {% if product.in_stock %}in-stock{% else %}out-of-stock{% endif %}">
+                        {% if product.in_stock %}
+                        ✓ In Stock ({{ product.stock }})
+                        {% else %}
+                        ✗ Out of Stock
+                        {% endif %}
+                    </p>
+                </div>
+            </a>
+            
+            {% if product.in_stock %}
+            <div style="padding: 0 1.5rem 1.5rem;">
+                <form method="post" action="{% url 'shop:add_to_cart' product.id %}" class="add-to-cart-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit" class="btn btn-primary btn-block">Add to Cart</button>
+                </form>
+            </div>
+            {% else %}
+            <div style="padding: 0 1.5rem 1.5rem;">
+                <button class="btn btn-secondary btn-block" disabled>Out of Stock</button>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h2>No Products Found</h2>
+        <p>Check back soon for new arrivals!</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

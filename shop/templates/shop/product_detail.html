@@ -1,0 +1,77 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - DaeZone{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="product-detail">
+        <div>
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-detail-image">
+            {% else %}
+            <div class="product-detail-image-placeholder">
+                <span class="placeholder-text">{{ product.name|truncatewords:4 }}</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="product-detail-info">
+            <p class="product-category">{{ product.category.name }}</p>
+            <h1>{{ product.name }}</h1>
+            
+            {% if product.is_on_sale %}
+            <div style="display: inline-block; background-color: var(--amber); color: var(--navy); padding: 8px 15px; border-radius: 5px; font-weight: bold; margin-bottom: 1rem;">
+                SALE {{ product.discount_percent }}% OFF
+            </div>
+            {% endif %}
+            
+            <div class="product-price" style="margin: 1.5rem 0;">
+                {% if product.is_on_sale %}
+                <span class="price-original" style="font-size: 1.2rem;">${{ product.original_price }}</span>
+                <span class="price-sale" style="font-size: 2rem;">${{ product.sale_price }}</span>
+                <div style="color: var(--success); font-weight: bold; margin-top: 0.5rem;">
+                    You save ${{ product.original_price|floatformat:2|add:"-"|add:product.sale_price|floatformat:2 }}
+                </div>
+                {% else %}
+                <span class="price-regular" style="font-size: 2rem;">${{ product.original_price }}</span>
+                {% endif %}
+            </div>
+            
+            <p class="stock-info {% if product.in_stock %}in-stock{% else %}out-of-stock{% endif %}" style="font-size: 1.1rem; margin-bottom: 2rem;">
+                {% if product.in_stock %}
+                ✓ In Stock - {{ product.stock }} available
+                {% else %}
+                ✗ Out of Stock
+                {% endif %}
+            </p>
+            
+            <div class="product-description">
+                <h3 style="color: var(--navy); margin-bottom: 1rem;">Description</h3>
+                <p>{{ product.description }}</p>
+            </div>
+            
+            {% if product.in_stock %}
+            <form method="post" action="{% url 'shop:add_to_cart' product.id %}" class="add-to-cart-form" style="margin-top: 2rem;">
+                {% csrf_token %}
+                <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+                    <label for="quantity" style="font-weight: 600;">Quantity:</label>
+                    <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ product.stock }}" class="quantity-input">
+                </div>
+                <button type="submit" class="btn btn-accent btn-block" style="padding: 1rem; font-size: 1.1rem;">
+                    Add to Cart
+                </button>
+            </form>
+            {% else %}
+            <button class="btn btn-secondary btn-block" disabled style="padding: 1rem; font-size: 1.1rem;">
+                Out of Stock
+            </button>
+            {% endif %}
+            
+            <a href="{% url 'shop:home' %}" class="btn btn-secondary btn-block" style="margin-top: 1rem;">
+                ← Back to Shop
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

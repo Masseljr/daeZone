@@ -1,0 +1,165 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Checkout - DaeZone{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Checkout</h1>
+        <p>Complete your order</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <!-- Checkout Form -->
+        <div>
+            <form method="post">
+                {% csrf_token %}
+                
+                <div style="background: var(--white); padding: 2rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                    <h2 style="color: var(--navy); margin-bottom: 1.5rem;">Shipping Address</h2>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        {{ address_form.full_name }}
+                        {% if address_form.full_name.errors %}
+                        <ul class="errorlist">
+                            {% for error in address_form.full_name.errors %}<li>{{ error }}</li>{% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        {{ address_form.phone }}
+                        {% if address_form.phone.errors %}
+                        <ul class="errorlist">
+                            {% for error in address_form.phone.errors %}<li>{{ error }}</li>{% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Address Line 1</label>
+                        {{ address_form.address_line1 }}
+                        {% if address_form.address_line1.errors %}
+                        <ul class="errorlist">
+                            {% for error in address_form.address_line1.errors %}<li>{{ error }}</li>{% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Address Line 2 (Optional)</label>
+                        {{ address_form.address_line2 }}
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">City</label>
+                            {{ address_form.city }}
+                            {% if address_form.city.errors %}
+                            <ul class="errorlist">
+                                {% for error in address_form.city.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">State</label>
+                            {{ address_form.state }}
+                            {% if address_form.state.errors %}
+                            <ul class="errorlist">
+                                {% for error in address_form.state.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Postal Code</label>
+                            {{ address_form.postal_code }}
+                            {% if address_form.postal_code.errors %}
+                            <ul class="errorlist">
+                                {% for error in address_form.postal_code.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Country</label>
+                            {{ address_form.country }}
+                            {% if address_form.country.errors %}
+                            <ul class="errorlist">
+                                {% for error in address_form.country.errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            {{ address_form.is_default }}
+                            <span style="margin-left: 0.5rem;">Save as default address</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div style="background: var(--white); padding: 2rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                    <h2 style="color: var(--navy); margin-bottom: 1.5rem;">Payment Method</h2>
+                    
+                    <div class="payment-methods">
+                        {% for value, label in payment_form.payment_method.field.choices %}
+                        <label class="payment-option">
+                            <input type="radio" name="payment_method" value="{{ value }}" {% if forloop.first %}checked{% endif %} style="margin-right: 1rem;">
+                            <span style="font-weight: 600;">{{ label }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    
+                    <p style="color: var(--text-light); font-size: 0.9rem; margin-top: 1rem; padding: 1rem; background: var(--gray); border-radius: 5px;">
+                        <strong>Note:</strong> This is a demo payment. No actual charges will be made.
+                    </p>
+                </div>
+                
+                <button type="submit" class="btn btn-accent btn-block" style="margin-top: 2rem; padding: 1rem; font-size: 1.1rem;">
+                    Place Order
+                </button>
+            </form>
+        </div>
+        
+        <!-- Order Summary -->
+        <div>
+            <div style="background: var(--white); padding: 2rem; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: sticky; top: 100px;">
+                <h2 style="color: var(--navy); margin-bottom: 1.5rem;">Order Summary</h2>
+                
+                {% for item in cart_items %}
+                <div style="display: flex; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid var(--gray);">
+                    <div>
+                        <p style="font-weight: 600; color: var(--navy);">{{ item.product.name }}</p>
+                        <p style="color: var(--text-light); font-size: 0.9rem;">Qty: {{ item.quantity }} × ${{ item.product.sale_price }}</p>
+                    </div>
+                    <p style="font-weight: bold; color: var(--navy);">${{ item.total_price }}</p>
+                </div>
+                {% endfor %}
+                
+                <div style="display: flex; justify-content: space-between; padding: 1.5rem 0; font-size: 1.3rem; font-weight: bold; color: var(--navy);">
+                    <span>Total:</span>
+                    <span style="color: var(--amber);">${{ cart.subtotal }}</span>
+                </div>
+                
+                <a href="{% url 'shop:cart' %}" class="btn btn-secondary btn-block">Edit Cart</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@media (max-width: 768px) {
+    .container > div {
+        grid-template-columns: 1fr !important;
+    }
+}
+</style>
+{% endblock %}

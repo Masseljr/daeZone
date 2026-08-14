@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DaeZone - Your Shopping Destination{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'shop/css/style.css' %}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'shop:home' %}" class="logo">DaeZone</a>
+            <ul class="nav-links">
+                <li><a href="{% url 'shop:home' %}">Shop</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'shop:orders' %}">My Orders</a></li>
+                    <li><a href="{% url 'shop:cart' %}" class="cart-badge">
+                        Cart 
+                        <span class="badge">{{ cart_count|default:0 }}</span>
+                    </a></li>
+                    <li><a href="{% url 'shop:logout' %}">Logout ({{ user.username }})</a></li>
+                {% else %}
+                    <li><a href="{% url 'shop:cart' %}" class="cart-badge">
+                        Cart 
+                        <span class="badge">{{ cart_count|default:0 }}</span>
+                    </a></li>
+                    <li><a href="{% url 'shop:login' %}">Login</a></li>
+                    <li><a href="{% url 'shop:register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 DaeZone. All rights reserved.</p>
+        <p>Built with Django | Modern E-Commerce Experience</p>
+        <a href="{% url 'admin:index' %}" class="secret-signature">MADE BY DAE</a>
+    </footer>
+
+    <script src="{% static 'shop/js/script.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

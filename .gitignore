@@ -1,0 +1,33 @@
+# Database
+db.sqlite3
+*.sqlite3
+
+# Media files (user uploads)
+media/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment variables
+.env
+.env.local
+
+# Django stuff
+*.log
+local_settings.py
+
+# Static files (if collected for production)
+staticfiles/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

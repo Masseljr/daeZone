@@ -1,0 +1,95 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart - DaeZone{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Shopping Cart</h1>
+        <p>Review your items before checkout</p>
+    </div>
+
+    {% if cart_items %}
+    <div class="cart-container">
+        {% for item in cart_items %}
+        <div class="cart-item">
+            <a href="{% url 'shop:product_detail' item.product.slug %}">
+                {% if item.product.image %}
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="cart-item-image">
+                {% else %}
+                <div class="cart-item-image-placeholder">
+                    <span style="color: var(--amber); font-weight: bold; font-size: 0.8rem;">{{ item.product.name|truncatewords:2 }}</span>
+                </div>
+                {% endif %}
+            </a>
+            
+            <div class="cart-item-details">
+                <h3 class="cart-item-name">
+                    <a href="{% url 'shop:product_detail' item.product.slug %}" style="text-decoration: none; color: var(--navy);">
+                        {{ item.product.name }}
+                    </a>
+                </h3>
+                <p class="cart-item-price">${{ item.product.sale_price }} each</p>
+                {% if item.product.is_on_sale %}
+                <span style="background-color: var(--amber); color: var(--navy); padding: 3px 8px; border-radius: 3px; font-size: 0.8rem; font-weight: bold;">
+                    SALE {{ item.product.discount_percent }}% OFF
+                </span>
+                {% endif %}
+            </div>
+            
+            <div class="quantity-controls">
+                <form method="post" action="{% url 'shop:update_cart' item.id %}" class="update-quantity-form">
+                    {% csrf_token %}
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <button type="button" class="btn btn-small btn-secondary quantity-minus">-</button>
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" class="quantity-input">
+                        <button type="button" class="btn btn-small btn-secondary quantity-plus">+</button>
+                        <button type="submit" class="btn btn-small btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div style="text-align: right;">
+                <p style="font-size: 1.3rem; font-weight: bold; color: var(--navy); margin-bottom: 1rem;">
+                    ${{ item.total_price }}
+                </p>
+                <form method="post" action="{% url 'shop:remove_from_cart' item.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-small remove-from-cart">Remove</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div class="cart-summary">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span class="total-amount">${{ cart.subtotal }}</span>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <a href="{% url 'shop:home' %}" class="btn btn-secondary" style="flex: 1;">
+                    Continue Shopping
+                </a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'shop:checkout' %}" class="btn btn-accent" style="flex: 1;">
+                    Proceed to Checkout
+                </a>
+                {% else %}
+                <a href="{% url 'shop:login' %}?next={% url 'shop:checkout' %}" class="btn btn-accent" style="flex: 1;">
+                    Login to Checkout
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h2>Your Cart is Empty</h2>
+        <p>Start shopping to add items to your cart</p>
+        <a href="{% url 'shop:home' %}" class="btn btn-accent">Shop Now</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

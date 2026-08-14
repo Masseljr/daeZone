@@ -1,0 +1,85 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+
+{% block title %}Order #{{ order.order_number }} - DaeZone{% endblock %}
+
+{% block content %}
+<div class="container">
+    <a href="{% url 'shop:orders' %}" class="btn btn-secondary" style="margin-bottom: 2rem;">← Back to Orders</a>
+    
+    <div class="order-card">
+        <div class="order-header">
+            <div>
+                <p class="order-number">Order #{{ order.order_number }}</p>
+                <p style="color: var(--text-light); font-size: 0.9rem;">
+                    Placed on {{ order.created_at|date:"F d, Y" }} at {{ order.created_at|time:"g:i A" }}
+                </p>
+            </div>
+            <span class="order-status status-{{ order.status }}">
+                {{ order.get_status_display }}
+            </span>
+        </div>
+        
+        <div style="margin-top: 2rem;">
+            <h3 style="color: var(--navy); margin-bottom: 1rem;">Order Items</h3>
+            {% for item in order.items.all %}
+            <div style="display: flex; justify-content: space-between; padding: 1rem; background: var(--gray); border-radius: 5px; margin-bottom: 0.5rem;">
+                <div>
+                    <p style="font-weight: 600; color: var(--navy);">{{ item.product.name }}</p>
+                    <p style="color: var(--text-light); font-size: 0.9rem;">Quantity: {{ item.quantity }} × ${{ item.price }}</p>
+                </div>
+                <p style="font-weight: bold; color: var(--navy);">${{ item.total_price }}</p>
+            </div>
+            {% endfor %}
+            
+            <div style="text-align: right; margin-top: 1rem; padding-top: 1rem; border-top: 2px solid var(--gray);">
+                <p style="font-size: 1.5rem; font-weight: bold; color: var(--navy);">
+                    Total: <span style="color: var(--amber);">${{ order.total_amount }}</span>
+                </p>
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+            <div>
+                <h3 style="color: var(--navy); margin-bottom: 1rem;">Shipping Address</h3>
+                {% if order.shipping_address %}
+                <div style="background: var(--gray); padding: 1rem; border-radius: 5px;">
+                    <p style="font-weight: 600; color: var(--navy);">{{ order.shipping_address.full_name }}</p>
+                    <p style="color: var(--text-dark); margin-top: 0.5rem;">
+                        {{ order.shipping_address.phone }}<br>
+                        {{ order.shipping_address.address_line1 }}<br>
+                        {% if order.shipping_address.address_line2 %}{{ order.shipping_address.address_line2 }}<br>{% endif %}
+                        {{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.postal_code }}<br>
+                        {{ order.shipping_address.country }}
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div>
+                <h3 style="color: var(--navy); margin-bottom: 1rem;">Payment Information</h3>
+                <div style="background: var(--gray); padding: 1rem; border-radius: 5px;">
+                    <p style="color: var(--text-dark);">
+                        <strong>Method:</strong> {{ order.payment.get_payment_method_display }}<br>
+                        <strong>Status:</strong> <span style="color: var(--success); font-weight: bold;">{{ order.payment.get_status_display }}</span><br>
+                        <strong>Transaction ID:</strong> {{ order.payment.transaction_id }}<br>
+                        <strong>Amount:</strong> <span style="color: var(--amber); font-weight: bold;">${{ order.payment.amount }}</span>
+                    </p>
+                </div>
+                
+                {% if order.estimated_delivery_date %}
+                <h3 style="color: var(--navy); margin: 1.5rem 0 1rem;">Delivery Information</h3>
+                <div style="background: var(--gray); padding: 1rem; border-radius: 5px;">
+                    <p style="color: var(--text-dark);">
+                        <strong>Estimated Delivery:</strong><br>
+                        <span style="font-size: 1.2rem; color: var(--navy); font-weight: bold;">
+                            {{ order.estimated_delivery_date|date:"F d, Y" }}
+                        </span>
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

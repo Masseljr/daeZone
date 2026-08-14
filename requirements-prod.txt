@@ -1,0 +1,7 @@
+Django==4.2
+Pillow==10.0.0
+celery==5.3.4
+redis==5.0.1
+python-decouple==3.8
+gunicorn==21.2.0
+psycopg2-binary==2.9.9
