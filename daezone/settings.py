@@ -26,12 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-=t*g-)67t^fy4u&@pr#=^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['.railway.app', '.vercel.app', 'localhost', '127.0.0.1']
-
-# Add Railway domain from environment
-RAILWAY_STATIC_URL = os.environ.get('RAILWAY_STATIC_URL', '')
-if RAILWAY_STATIC_URL:
-    ALLOWED_HOSTS.append(RAILWAY_STATIC_URL)
+ALLOWED_HOSTS = ['*']  # Allow all hosts for now - restrict in production
 
 # CSRF trusted origins for Railway
 CSRF_TRUSTED_ORIGINS = [
