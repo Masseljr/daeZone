@@ -14,3 +14,6 @@ cmds = [
 
 [start]
 cmd = "gunicorn --bind 0.0.0.0:$PORT daezone.wsgi:application"
+
+[variables]
+MISE_PYTHON_GITHUB_ATTESTATIONS = "false"
