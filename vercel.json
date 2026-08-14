@@ -4,13 +4,9 @@
     {
       "src": "daezone/wsgi.py",
       "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
-    },
-    {
-      "src": "build_files.sh",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "staticfiles"
+      "config": { 
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.9"
       }
     }
   ],
@@ -27,5 +23,8 @@
       "src": "/(.*)",
       "dest": "daezone/wsgi.py"
     }
-  ]
+  ],
+  "env": {
+    "DJANGO_SETTINGS_MODULE": "daezone.settings"
+  }
 }

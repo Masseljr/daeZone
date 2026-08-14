@@ -1,6 +1,6 @@
 #!/bin/bash
-# Install dependencies
-pip install -r requirements.txt
+# Install dependencies with --break-system-packages flag for Vercel
+pip install --break-system-packages -r requirements.txt
 
 # Collect static files
 python manage.py collectstatic --noinput
