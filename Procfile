@@ -1,2 +1,2 @@
-web: gunicorn daezone.wsgi --log-file -
-release: python manage.py migrate --noinput && python manage.py collectstatic --noinput
+release: python manage.py migrate --noinput
+web: python manage.py collectstatic --noinput && gunicorn daezone.wsgi --log-file -
