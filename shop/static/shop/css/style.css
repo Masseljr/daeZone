@@ -23,6 +23,13 @@ body {
     background-color: var(--gray);
     color: var(--text-dark);
     line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
 }
 
 /* Navigation */
@@ -598,7 +605,7 @@ body {
     color: var(--white);
     text-align: center;
     padding: 3rem 0;
-    margin-top: 4rem;
+    margin-top: auto;
     position: relative;
 }
 
