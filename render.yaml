@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: daezone
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput
+    startCommand: gunicorn daezone.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: daezone-db
+          property: connectionString
+      - key: DEBUG
+        value: False
+
+databases:
+  - name: daezone-db
+    plan: free
+    databaseName: daezone
+    user: daezone
