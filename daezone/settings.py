@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['*']  # Allow all hosts for now - restrict in production
 CSRF_TRUSTED_ORIGINS = [
     'https://*.railway.app',
     'https://*.vercel.app',
+    'https://*.onrender.com',
 ]
 
 
